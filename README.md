@@ -1,6 +1,6 @@
 # Static Analysis Tool for Wasm Modules
 
-This repository contains the static analysis tool for Wasm modules developed by the authors of the paper "Everything Old is New Again: Binary Security of WebAssembly" and the "Wasabi" tool that is required by it. The codes are updated in order to analyze the Wasm instructions that were not handled.
+This repository contains the static analysis tool for Wasm modules developed by the authors of the paper "Everything Old is New Again: Binary Security of WebAssembly" https://github.com/sola-st/wasm-binary-security/tree/master/tool/wasm-security-analysis and the "Wasabi" tool https://github.com/danleh/wasabi that is required by it. The codes are updated in order to analyze the Wasm instructions that were not handled.
 
 ## Compilation Instructions
 
