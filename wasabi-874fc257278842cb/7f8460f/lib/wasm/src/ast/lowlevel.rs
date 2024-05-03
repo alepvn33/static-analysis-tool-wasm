@@ -88,6 +88,7 @@ pub enum Section {
     //   The serial code (commented-out in the next line) does not record the code index <-> byte offset mapping.
     // #[tag = 10] Code(WithSize<Vec<WithSize<Code>>>),
     #[tag = 11] Data(WithSize<SectionOffset<Vec<Data>>>),
+    #[tag = 12] DataCount(WithSize<SectionOffset<u32>>),
 }
 
 #[derive(WasmBinary, Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
@@ -368,6 +369,14 @@ pub enum Instr {
     #[tag = 0xc3] I64Extend16S,
     #[tag = 0xc4] I64Extend32S,
 
+    // Multi-threads proposal instructions
+    #[tag = 0xfe] MultiThreadsInstr,
+
+}
+
+#[derive(WasmBinary, Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
+pub enum MultiThreadsInstr {
+    #[tag = 0x48] I32AtomicRmwCmpxchg,
 }
 
 /* Important/widely supported custom sections */

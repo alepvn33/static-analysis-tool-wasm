@@ -23,8 +23,8 @@ pub fn derive_wasm(input: TokenStream) -> TokenStream {
         Data::Struct(DataStruct { ref fields, .. }) => {
             // Structs can also be annotated with a tag attribute, which means that the struct
             // _must_ be preceded by the given byte.
-            let tag_constant: Option<u8> = attributes_to_tag(&input.attrs);
 
+            let tag_constant: Option<u8> = attributes_to_tag(&input.attrs);
             let check_tag = tag_constant.map(|tag_constant| quote! {
                 let offset_before = state.current_offset;
                 let tag = u8::decode(reader, state).set_err_elem::<Self>()?;
@@ -32,6 +32,7 @@ pub fn derive_wasm(input: TokenStream) -> TokenStream {
                     return Err(crate::error::Error::invalid_tag::<#data_name>(offset_before, tag));
                 }
             });
+            
             let decode_fields = decode_fields(&parse_quote!(#data_name), &fields);
 
             quote!({

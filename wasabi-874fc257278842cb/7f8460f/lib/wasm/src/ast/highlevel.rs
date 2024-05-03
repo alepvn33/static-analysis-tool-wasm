@@ -28,6 +28,9 @@ pub struct Module {
     pub start: Option<Idx<Function>>,
 
     pub custom_sections: Vec<RawCustomSection>,
+
+    pub data_count: Option<u32>,
+    pub expected_data_count: Option<u32>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]

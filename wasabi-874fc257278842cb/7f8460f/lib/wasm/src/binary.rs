@@ -385,6 +385,7 @@ impl WasmBinary for String {
 
 impl WasmBinary for Module {
     fn decode<R: io::Read>(reader: &mut R, state: &mut DecodeState) -> Result<Self, Error> {
+
         // Check magic number.
         let mut magic_number = [0u8; 4];
         reader.read_exact(&mut magic_number).add_err_info::<Module>(0)?;
@@ -392,19 +393,21 @@ impl WasmBinary for Module {
             return Err(Error::new::<Module>(0, ErrorKind::MagicNumber { actual: magic_number }));
         }
         state.current_offset += 4;
-
+        
         // Check version.
         let version = reader.read_u32::<LittleEndian>().add_err_info::<Module>(4)?;
         if version != 1 {
             return Err(Error::new::<Module>(4, ErrorKind::Version { actual: version }));
         }
         state.current_offset += 4;
-
+        
         // Parse sections until EOF.
         let mut sections = Vec::new();
         let mut last_section_type = None;
         loop {
+
             let offset_section_begin = state.current_offset;
+            
             match Section::decode(reader, state) {
                 Ok(mut section) => {
                     // To insert custom sections at the correct place when serializing again, we
@@ -414,7 +417,7 @@ impl WasmBinary for Module {
                     } else {
                         last_section_type = Some(std::mem::discriminant(&section));
                     }
-
+                    
                     sections.push(section);
                 }
                 // If we cannot even read one more byte (the ID of the next section), we are done.
@@ -504,10 +507,17 @@ impl WasmBinary for Limits {
             0x00 => Limits {
                 initial_size: u32::decode(reader, state)?,
                 max_size: None,
+                shared: false,
             },
             0x01 => Limits {
                 initial_size: u32::decode(reader, state)?,
                 max_size: Some(u32::decode(reader, state)?),
+                shared: false,
+            },
+            0x03 => Limits {
+                initial_size: u32::decode(reader, state)?,
+                max_size: Some(u32::decode(reader, state)?),
+                shared: true,
             },
             byte => return Err(Error::invalid_tag::<Limits>(state.current_offset, byte))
         })

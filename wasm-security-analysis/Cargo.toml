@@ -5,7 +5,8 @@ authors = ["Daniel Lehmann <mail@dlehmann.eu>"]
 edition = "2018"
 
 [dependencies]
-wasm = { path = "/home/id03141/wasm-binary-security/tool/wasabi-874fc257278842cb/7f8460f/lib/wasm" }
+wasm = { path = "/home/id03141/static-analysis-tool-wasm/wasabi-874fc257278842cb/7f8460f/lib/wasm" }
+#wasm = { path = "/home/id03141/static-analysis-tool-wasm/wasabi-874fc257278842cb/fe12347/crates/wasabi_wasm" }
 
 [profile.release]
 lto = true

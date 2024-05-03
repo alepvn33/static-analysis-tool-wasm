@@ -192,11 +192,28 @@ impl From<ll::Module> for hl::Module {
                     }
                 }
                 ll::Section::Data(ll::WithSize(ll::SectionOffset(data))) => {
+                    module.data_count = Some(0);
                     for data in data {
                         module.memories[data.memory_idx.into_inner()].data.push(hl::Data {
                             offset: from_lowlevel_expr(data.offset, &types),
                             bytes: data.init,
-                        })
+                        });
+                        module.data_count = Some(module.data_count.unwrap() + 1);
+                    }
+                    if module.expected_data_count.is_some() {
+                        if module.data_count != module.expected_data_count{
+                            panic!("Data count section does not match the number of data segments from Data section");
+                        }
+                    }
+                }
+                ll::Section::DataCount(ll::WithSize(ll::SectionOffset(expected_data_count))) => {
+                    println!("module.expected_data_count: {:?}", module.expected_data_count);
+                    println!("module.data_count: {:?}", module.data_count);
+                    module.expected_data_count = Some(expected_data_count);
+                    if module.data_count.is_some() {
+                        if module.data_count != module.expected_data_count{
+                            panic!("Data count section does not match the number of data segments from Data section");
+                        }
                     }
                 }
             }
@@ -222,6 +239,7 @@ fn from_lowlevel_code(code: ll::Code, types: &[FunctionType]) -> hl::Code {
 fn from_lowlevel_expr(expr: ll::Expr, types: &[FunctionType]) -> hl::Expr {
     expr.0.into_iter().map(|instr| from_lowlevel_instr(instr, types)).collect()
 }
+
 
 fn from_lowlevel_instr(instr: ll::Instr, types: &[FunctionType]) -> hl::Instr {
     match instr {
@@ -414,9 +432,9 @@ fn from_lowlevel_instr(instr: ll::Instr, types: &[FunctionType]) -> hl::Instr {
         ll::Instr::F32ReinterpretI32 => hl::Instr::Numeric(hl::NumericOp::F32ReinterpretI32),
         ll::Instr::F64ReinterpretI64 => hl::Instr::Numeric(hl::NumericOp::F64ReinterpretI64),
 
+        ll::Instr::MultiThreadsInstr => todo!()
     }
 }
-
 
 /* From high-level to low-level. */
 

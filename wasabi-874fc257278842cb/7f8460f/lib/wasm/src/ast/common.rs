@@ -122,6 +122,7 @@ pub struct MemoryType(pub Limits);
 pub struct Limits {
     pub initial_size: u32,
     pub max_size: Option<u32>,
+    pub shared: bool,
 }
 
 #[derive(WasmBinary, Debug, Copy, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
